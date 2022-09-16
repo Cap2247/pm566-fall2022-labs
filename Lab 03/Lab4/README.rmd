@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Read in the data
 First download and then read in with data.table:fread()
 
-```{r}
+```{r read-data, cache=TRUE}
 if (!file.exists("../lab03/met_all.gz"))
 download.file("https://raw.githubusercontent.com/USCbiostats/data-science-data/master/02_met/met_all.gz", "met_all.gz", method="libcurl", timeout = 60)
 
@@ -38,7 +38,7 @@ summary(met$elev)
 ```
 Generate a date variable 
 
-```{r create-ymd}
+```{r create-ymd,cache=TRUE}
 met <- met[, ymd := as.Date(paste(year, month, day, sep = "-"))]
 ```
 Using the data.table::week function, keep the observations of the first week of the month.

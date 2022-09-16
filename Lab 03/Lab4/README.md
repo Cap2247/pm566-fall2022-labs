@@ -122,12 +122,91 @@ met_avg <- met[,.(
   rh       = mean(rh,na.rm=TRUE),
   wind.sp  = mean(wind.sp,na.rm=TRUE),
   vis.dist = mean(vis.dist,na.rm=TRUE),
+  dew.point= mean(dew.point, na.rm=TRUE),
   lat      = mean(lat),
   lon      = mean(lon), 
   elev     = mean(elev,na.rm=TRUE)
 ), by=c("USAFID")]
 ```
 
-Create a region variable for NW, SW, NE, SE based on lon = -98.00 and
-lat = 39.71 degrees Create a categorical variable for elevation as in
-the lecture slides
+Create a region variable for NW, SW, NE, SE based on lon = -93. 8.00 and
+lat = 39.71 degrees
+
+``` r
+met_avg[, region := 
+                fifelse(lon >=-98 & lat > 39.71, "NE",
+                fifelse(lon <-98 & lat > 39.71, "NW",
+                fifelse(lon <-98 & lat <= 39.71, "SW","SE")))]
+
+ table(met_avg$region)                     
+```
+
+    ## 
+    ##  NE  NW  SW 
+    ## 484 146 945
+
+Create a categorical variable for elevation as in the lecture slides
+
+``` r
+met_avg[, elev_cat := fifelse(elev > 252, "high", "low")]
+```
+
+## 3. MAke Violin plots of dew point temp by region
+
+``` r
+met_avg[!is.na(region)] %>% 
+  ggplot() + 
+  geom_violin(mapping = aes(y =temp, x = 1, color=region, fill=region)) + 
+  facet_wrap(~ region, nrow = 1)
+```
+
+![](README_files/figure-gfm/violin-temp-1.png)<!-- -->
+
+``` r
+met_avg[, region := 
+                fifelse(lon >=-98 & lat > 39.71, "NE",
+                fifelse(lon <-98 & lat > 39.71, "NW",
+                fifelse(lon <-98 & lat <= 39.71, "SW","SE")))]
+
+ table(met_avg$region)
+```
+
+    ## 
+    ##  NE  NW  SW 
+    ## 484 146 945
+
+``` r
+met_avg[!is.na(region)] %>% 
+  ggplot() + 
+  geom_violin(mapping = aes(y =dew.point, x = 1, color=region, fill=region)) + 
+  facet_wrap(~ region, nrow = 1)
+```
+
+![](README_files/figure-gfm/violin%20dew.point-1.png)<!-- --> the
+highest dew point temperatures recorded in the south west.
+
+``` r
+met_avg[!is.na(region) & !is.na(wind.sp)] %>% 
+  ggplot() + 
+  geom_violin(mapping = aes(y =wind.sp, x = 1, color=region, fill=region)) + 
+  facet_wrap(~ region, nrow = 1)
+```
+
+![](README_files/figure-gfm/violin%20wind.sp-1.png)<!-- --> the highest
+wind speed occured in the Northeast
+
+\##4. Use geom_point and geom_smooth to examine the association between
+dew point temperature and wind speed by region
+
+``` r
+met_avg[!is.na(region) & !is.na(wind.sp)] %>% 
+  ggplot(mapping = aes(x =wind.sp, y = dew.point, color=region,)) + 
+  geom_point() + 
+  geom_smooth(method = lm, mapping = aes(linetype = region, color ="black"))+
+  facet_wrap(~ region, nrow = 1)
+```
+
+    ## `geom_smooth()` using formula 'y ~ x'
+
+![](README_files/figure-gfm/scatterplot-dewpoint-winds.p-1.png)<!-- -->
+Southwest is the only plot decreasing.
