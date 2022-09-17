@@ -136,22 +136,84 @@ met_avg[!is.na(region) & !is.na(wind.sp)] %>%
 ```
 Southwest is the only plot decreasing. 
 
-##5. Use geom_bar to creat bar plots of the weather stations by elevation category 
+```{r}
+library(tidyverse)
+
+```
 ```{r}
 
-met_avg %>%
-filter(!(region %in% NA)) %>% 
-  ggplot(mapping = aes(x = elev)) + 
-  geom_bar(position="dodge")
+met_avg[!is.na(dew.point)] %>%
+  ggplot(mapping = aes(x = region, y = dew.point))+
+  stat_summary(fun.data= mean_sdl)
+  
 ```
+
+
+
+##5. Use geom_bar to creat bar plots of the weather stations by elevation category 
+
+
+```{r}
+ggplot(data = met_avg) + 
+  geom_bar(mapping = aes(x = elev, color = region, position = "dodge"))+
+  theme_bw()+
+  labs(title = "Weather Stations by Elevation", x = "elevation")
+  
+```  
+
+```{r}
+met_avg[!is.na(region) & !is.na(dew.point) & !is.na(wind.sp)] %>% 
+  ggplot() + 
+  geom_bar(mapping = aes(x = elev, fill = region), )+
+  scale_fill_brewer(palette = "Blues")
 ```
+```{r}
+library(tidyverse)
+```
+
 ## 6. Use stat_summary to examine mean dew point and wind speed by region with standard deviation error bars
 
 ```{r}
 met_avg[!is.na(dew.point)] %>%
-  ggplot (mapping = aes(x = region, y = dew.point))
-    stat_summary(fun.data= mean_sdl)
+  ggplot(mapping = aes(x = region, y = dew.point)) + 
+    stat_summary(fun.data = mean_sdl, 
+                 geom = "errorbar")
+```
+### ##7. Generate a map of weather stations and show trend in relative humidity of top 10
+
+```{r}
+library(leaflet)
+# Generating a color palette
+rh.pal <- colorNumeric(c('darkgreen','goldenrod','brown'), domain=met_avg$rh)
+rh.pal
+
+```
+Use addMarkers to include the top 10 places in relative h (hint: this
+will be useful rank(-rh) \<= 10)
+
+```{r}
+top10rh <- met_avg[ rank(-rh) <= 10]
 ```
 
+```{r}
+#met_avg[ order(-rh)][1:10]
+```
+
+```{r}
+rhmap <- leaflet(met_avg) %>% 
+  # The looks of the Map
+  addProviderTiles('CartoDB.Positron') %>% 
+  # Some circles
+  addCircles(
+    lat = ~lat, lng=~lon,
+                                                  
+    label = ~paste0(rh), color = ~ rh.pal(rh),
+    opacity = 1, fillOpacity = 1, radius = 500
+    ) %>%
+  # And a pretty legend
+  addLegend('bottomleft', pal=rh.pal, values=met_avg$rh,
+          title='Relative Humid.', opacity=1)
+rhmap
+```
 
 

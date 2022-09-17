@@ -1,7 +1,7 @@
 Lab 03
 ================
 CP
-2022-09-15
+2022-09-17
 
 ## Read in the data
 
@@ -211,37 +211,52 @@ met_avg[!is.na(region) & !is.na(wind.sp)] %>%
 ![](README_files/figure-gfm/scatterplot-dewpoint-winds.p-1.png)<!-- -->
 Southwest is the only plot decreasing.
 
+``` r
+library(tidyverse)
+```
+
+``` r
+met_avg[!is.na(dew.point)] %>%
+  ggplot(mapping = aes(x = region, y = dew.point))+
+  stat_summary(fun.data= mean_sdl)
+```
+
+    ## Warning: Computation failed in `stat_summary()`:
+
+![](README_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
 \##5. Use geom_bar to creat bar plots of the weather stations by
 elevation category
 
 ``` r
-met_avg %>%
-filter(!(region %in% NA)) %>% 
-  ggplot(mapping = aes(x = elev)) + 
-  geom_bar(position="dodge")
+ggplot(data = met_avg) + 
+  geom_bar(mapping = aes(x = elev, color = region, position = "dodge"))+
+  theme_bw()+
+  labs(title = "Weather Stations by Elevation", x = "elevation")
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+    ## Warning: Ignoring unknown aesthetics: position
 
-    ## 6. Use stat_summary to examine mean dew point and wind speed by region with standard deviation error bars
-
-
-    ```r
-    met_avg[!is.na(dew.point)] %>%
-      ggplot (mapping = aes(x = region, y = dew.point))
-
-![](README_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 ``` r
-    stat_summary(fun.data= mean_sdl)
+met_avg[!is.na(region) & !is.na(dew.point) & !is.na(wind.sp)] %>% 
+  ggplot() + 
+  geom_bar(mapping = aes(x = elev, fill = region), )+
+  scale_fill_brewer(palette = "Blues")
 ```
 
-    ## geom_pointrange: na.rm = FALSE, orientation = NA
-    ## stat_summary: fun.data = function (x, ...) 
-    ## {
-    ##     check_installed("Hmisc")
-    ##     fun <- getExportedValue("Hmisc", fun)
-    ##     result <- do.call(fun, list(x = quote(x), ...))
-    ##     rename(new_data_frame(as.list(result)), c(Median = "y", Mean = "y", Lower = "ymin", Upper = "ymax"))
-    ## }, fun = NULL, fun.max = NULL, fun.min = NULL, fun.args = list(), na.rm = FALSE, orientation = NA
-    ## position_identity
+![](README_files/figure-gfm/unnamed-chunk-12-1.png)<!-- --> \## 6. Use
+stat_summary to examine mean dew point and wind speed by region with
+standard deviation error bars
+
+``` r
+met_avg[!is.na(dew.point)] %>%
+  ggplot(mapping = aes(x = region, y = dew.point)) + 
+    stat_summary(fun.data = mean_sdl, 
+                 geom = "errorbar")
+```
+
+    ## Warning: Computation failed in `stat_summary()`:
+
+![](README_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
