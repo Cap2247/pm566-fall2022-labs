@@ -199,6 +199,19 @@ top10rh <- met_avg[ rank(-rh) <= 10]
 ```{r}
 #met_avg[ order(-rh)][1:10]
 ```
+```{r}
+
+
+webshot::install_phantomjs()
+
+
+library(webshot)
+```
+```{r}
+library(leaflet)
+
+```
+
 
 ```{r}
 rhmap <- leaflet(met_avg) %>% 
@@ -218,12 +231,27 @@ rhmap
 ```
 
 ```{r}
-install.packages('gganimate')
-install.packages("gapminder")
+
 ```
 ```{r}
 library(ggplot2)
 library(gganimate)
 library(gapminder)
 
+```
+
+
+
+```{r}
+library(gapminder)
+
+ggplot(met_avg, aes(elev, temp , size = dew.point, colour = vis.dist)) +
+  geom_point(alpha = 0.7, show.legend = FALSE) +
+  scale_size(range = c(2, 12)) +
+  scale_x_log10() +
+  facet_wrap(~region) 
+  # Here comes the gganimate specific bits
+  labs(title = '2019: {frame_time}', x = 'elev', y = 'temp') +
+  transition_time(hour) +
+  ease_aes('linear')
 ```
