@@ -1,4 +1,4 @@
-Lab 03
+Lab 04
 ================
 CP
 2022-09-17
@@ -285,8 +285,8 @@ rh.pal
     ##     }
     ##     pf(rescaled)
     ## }
-    ## <bytecode: 0x000002a4834ccb10>
-    ## <environment: 0x000002a4834ce6c0>
+    ## <bytecode: 0x000001f7129fa8e8>
+    ## <environment: 0x000001f712a0e480>
     ## attr(,"colorType")
     ## [1] "numeric"
     ## attr(,"colorArgs")
