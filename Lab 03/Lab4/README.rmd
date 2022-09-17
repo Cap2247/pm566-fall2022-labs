@@ -217,4 +217,13 @@ rhmap <- leaflet(met_avg) %>%
 rhmap
 ```
 
+```{r}
+install.packages('gganimate')
+install.packages("gapminder")
+```
+```{r}
+library(ggplot2)
+library(gganimate)
+library(gapminder)
 
+```
