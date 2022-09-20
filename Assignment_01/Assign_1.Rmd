@@ -47,13 +47,15 @@ view(epa19)
 dim(epa19)
 
 ```
+There are 53156 rows and 20 columns of data. 
+
 ```{r}
 tail(epa19)
 ```
 ```{r}
 epa19[c(5,6,7,8,9,10), ]
 ```
-Checking varibale names
+Checking variable names
 
 ```{r}
 names(epa19)
@@ -86,12 +88,45 @@ class(epa19$AQS_PARAMETER_DESC)
 class(epa19$COUNTY)
 
 ```
+```{r}
+summary(epa19$`Daily Mean PM2.5 Concentration`)
+```
+ 
+```{r}
+table(epa19$`Daily Mean PM2.5 Concentration`)
+```
+ Checking with "google" a pm2.5 of 120 is extremely high. Pm 2.5  concentration at 12 is considered healthy, and levels above 35 are considered unhealthy. We have concentration levels that register at 120. This vlue is high but not unheard of. In some places concentrations can register above 500. Considering the bulk of our data points are registering values between 1 and 20 I contend that the data is reliable. There are no missing data. 
 
 
+Read in data for 2004 and check dimensions, head, tail vaiable names and variable types 
+```{r}
+epa04 <- fread("EPA_04.csv", header = TRUE, )
+```
+```{r}
+view(epa04)
+```
+```{r}
+dim(epa04)
 
+```
+```{r}
+head(epa04)
 
+```
+```{r}
+tail(epa04)
 
+```
+```{r}
+summary(epa04)
+```
+```{r}
+table(epa04$`Daily Mean PM2.5 Concentration`)
+```
 
-
+```{r}
+str(epa04)
+```
+In the EPA data from 2004 there are 19233 rows with 20 columns. The highest value for pm2.5 concentration is 251 which is extremely high. the 75% is 16 which is more inline with averages and guidelines for pm2.5, although 251 is not outside of the realm of possibility. 
 
 
