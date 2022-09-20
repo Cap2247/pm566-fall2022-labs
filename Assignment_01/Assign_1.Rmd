@@ -29,8 +29,11 @@ class(epadf)
 ```{r}
 epa19 <- fread("EPA_19.csv", header = TRUE, )
 ```
-Checking data for 2019
+Checking head, tail,dimensions and summary for 2019 data. 
 
+```{r}
+summary(epa19)
+```
 
 ```{r}
 head(epa19)
@@ -50,10 +53,39 @@ tail(epa19)
 ```{r}
 epa19[c(5,6,7,8,9,10), ]
 ```
+Checking varibale names
+
 ```{r}
 names(epa19)
 ```
 
+```{r}
+mean(epa19$`Daily Mean PM2.5 Concentration`)
+```
+Checking variable Type 
+
+```{r}
+class(epa19$Date)
+class(epa19$POC)
+class(epa19$DAILY_AQI_VALUE)
+class(epa19$PERCENT_COMPLETE)
+class(epa19$CBSA_CODE)
+class(epa19$STATE)
+class(epa19$SITE_LATITUDE)
+class(epa19$Source)
+class(epa19$`Daily Mean PM2.5 Concentration`)
+class(epa19$`Site Name`)
+class(epa19$AQS_PARAMETER_CODE)
+class(epa19$CBSA_NAME)
+class(epa19$COUNTY_CODE)
+class(epa19$SITE_LONGITUDE)
+class(epa19$`Site ID`)
+class(epa19$UNITS)
+class(epa19$DAILY_OBS_COUNT)
+class(epa19$AQS_PARAMETER_DESC)
+class(epa19$COUNTY)
+
+```
 
 
 
