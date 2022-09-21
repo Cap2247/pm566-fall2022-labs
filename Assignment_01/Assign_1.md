@@ -749,3 +749,62 @@ In the EPA data from 2004 there are 19233 rows with 20 columns. The
 highest value for pm2.5 concentration is 251 which is extremely high.
 the 75% is 16 which is more inline with averages and guidelines for
 pm2.5, although 251 is not outside of the realm of possibility.
+
+``` r
+names(epa19)
+```
+
+    ##  [1] "Date"                           "Source"                        
+    ##  [3] "Site ID"                        "POC"                           
+    ##  [5] "Daily Mean PM2.5 Concentration" "UNITS"                         
+    ##  [7] "DAILY_AQI_VALUE"                "Site Name"                     
+    ##  [9] "DAILY_OBS_COUNT"                "PERCENT_COMPLETE"              
+    ## [11] "AQS_PARAMETER_CODE"             "AQS_PARAMETER_DESC"            
+    ## [13] "CBSA_CODE"                      "CBSA_NAME"                     
+    ## [15] "STATE_CODE"                     "STATE"                         
+    ## [17] "COUNTY_CODE"                    "COUNTY"                        
+    ## [19] "SITE_LATITUDE"                  "SITE_LONGITUDE"
+
+``` r
+epa19 <- fread("EPA_19.csv", header = TRUE, )
+```
+
+### Number 2
+
+Creating new varibale for year in each data to be used as an identifyer
+
+``` r
+epa19 <- epa19[ , year := 2019]
+```
+
+``` r
+epa04 <- epa04[ , year := 2004]
+```
+
+``` r
+view(epa04$year)
+```
+
+combining both databases
+
+``` r
+epatotal <- rbind(epa04,epa19)
+```
+
+``` r
+library(leaflet)
+```
+
+``` r
+Site_location <- (unique(epatotal[,c("SITE_LATITUDE","SITE_LONGITUDE")])) 
+```
+
+``` r
+pal <- colorNumeric(c('darkgreen','goldenrod'), 
+                    domain = epatotal$year)
+leaflet(Site_location) %>% 
+  addProviderTiles('CartoDB.Positron') %>% 
+  addCircles(lat = ~SITE_LATITUDE, lng = ~SITE_LONGITUDE, opacity = 1, fillOpacity = 1, radius = 400)
+```
+
+![](Assign_1_files/figure-gfm/unnamed-chunk-32-1.png)<!-- -->
