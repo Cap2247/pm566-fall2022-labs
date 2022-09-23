@@ -109,7 +109,23 @@ head(station_averages)
 lets use 'which.min()'
 It summarizes the min from above 
 
- 
+## Question 2
+
+```{r}
+merge(x= station_averages,
+      y= stmeds,
+      by.x = "STATE",
+      all.x=T,
+      all.y = FALSE)
+```
+
+
+```{r}
+station_averages[,. (
+                            temp_dist50     := (temp, na.rm=T),
+                            windsp50   = median(wind.sp, na.rm=T),
+                            atmpress50 = median(atm.press, na.rm=T)
+```
 
 
 
