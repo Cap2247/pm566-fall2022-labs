@@ -134,16 +134,7 @@ names(epa19)
 ```{r}
 epa19 <- fread("EPA_19.csv", header = TRUE, )
 ```
-### Number 2 
-Creating new varibale for year in each data to be used as an identifyer 
-```{r}
-epa19 <- epa19[ , year := 2019]
-
-```
-```{r}
-epa04 <- epa04[ , year := 2004]
-
-```
+### Number 2 Create a new variable called year and merge 2004 and 2019 data  
 
 ```{r}
 view(epa04$year)
@@ -155,6 +146,14 @@ epatotal <- rbind(epa04,epa19)
 
 ```
 ```{r}
+epatotal <- mutate(epatotal, year = factor(rep(c(2004, 2019), c(nrow(epa04), nrow(epa19))))) 
+       
+```
+```{r}
+
+```
+
+```{r}
 library(leaflet)
 ```
 ```{r}
@@ -163,10 +162,10 @@ Site_location <- (unique(epatotal[,c("SITE_LATITUDE","SITE_LONGITUDE")]))
 
 
 ```{r}
-pal <- colorNumeric(c('darkgreen','goldenrod'), 
+pal <- colorNumeric(c('green','red'), 
                     domain = epatotal$year)
 leaflet(Site_location) %>% 
   addProviderTiles('CartoDB.Positron') %>% 
-  addCircles(lat = ~SITE_LATITUDE, lng = ~SITE_LONGITUDE, opacity = 1, fillOpacity = 1, radius = 400)
+  addCircles (lat = ~SITE_LATITUDE, lng = ~SITE_LONGITUDE, opacity = 1, fillOpacity = 1, radius = 400)
 ```
 
