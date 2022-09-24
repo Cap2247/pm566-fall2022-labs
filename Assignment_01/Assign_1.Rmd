@@ -195,7 +195,7 @@ filter(epatotal, year == "2019") %>% summarize(negative = mean(PM < 0, na.rm = T
 There is a small proportion of data points that are negative . 
 
 
-I dont understand why this cant be found whn ive named it and used it multiple times???
+
 
 ```{r}
 qplot(PM , 'DAILY_AQI_VALUE', data = epatotal)
@@ -204,12 +204,19 @@ qplot(PM , 'DAILY_AQI_VALUE', data = epatotal)
 ggplot(epatotal, aes(x = SITE_LATITUDE , y = PM ))+ geom_point() 
 ```
 ```{r}
-ggplot(epatotal[epatotal$COUNTY %in% "Los Angeles"], aes(x= year , y= PM)) + geom_point()
+set.seed(2015)
+ggplot(epatotal[epatotal$COUNTY %in% "Los Angeles"], aes(x= year , y= PM)) + geom_point() 
 ```
 In los Angeles Pm particialte concentration is a slightly lower in 2019 that in 2004 but 2019 has an outlier above 115 ug/m3 LC and 2004 highest value is registered at 75 ug/m3 LC. 
 class
 
-
+```{r}
+epatotal %>%
+        ggplot(aes(x=COUNTY))+
+        geom_bar(fill= "blue")+
+        coord_flip()
+```
+Here you can see los Angeles county has he highest concentration of PM2.5 followed by Riverside county. 
 
 
 
