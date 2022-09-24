@@ -176,8 +176,39 @@ set.seed(2015)
 ```
 
 ```{r}
-ggplot(epatotal, aes(x= year, y= PM))
+ggplot(epatotal, aes(x= year, y= PM, group = factor(year))) +
+geom_boxplot(mapping=aes(x=factor(year), y=PM, fill=factor(year)))
 ```
+PM Levels from 2019 were slightly lower than PM levels from 2004 
+
+
+```{r}
+with (epatotal, tapply(PM, year, summary))
+
+```
+There are negative Pm concentrations in the dataset. 
+Checking further to see how many neagtive values there are. 
+```{r}
+filter(epatotal, year == "2004") %>% summarize(negative = mean(PM < 0, na.rm = TRUE))
+filter(epatotal, year == "2019") %>% summarize(negative = mean(PM < 0, na.rm = TRUE))
+```
+There is a small proportion of data points that are negative . 
+
+
+I dont understand why this cant be found whn ive named it and used it multiple times???
+
+```{r}
+qplot(PM , 'DAILY_AQI_VALUE', data = epatotal)
+```
+```{r}
+ggplot(epatotal, aes(x = SITE_LATITUDE , y = PM ))+ geom_point() 
+```
+```{r}
+ggplot(epatotal[epatotal$COUNTY %in% "Los Angeles"], aes(x= year , y= PM)) + geom_point()
+```
+In los Angeles Pm particialte concentration is a slightly lower in 2019 that in 2004 but 2019 has an outlier above 115 ug/m3 LC and 2004 highest value is registered at 75 ug/m3 LC. 
+class
+
 
 
 
