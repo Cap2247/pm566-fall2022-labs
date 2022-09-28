@@ -121,4 +121,95 @@ frequently used word, and we removed the numbers
 
 ### Question 4
 
-Bonus points if you remove numbers as well
+bigrams and trigrams
+
+``` r
+mts %>%
+  unnest_ngrams(bigram, transcription, n=2) %>%
+  count(bigram, sort = TRUE) %>%
+  top_n(20, n) %>%
+  ggplot(aes(n, fct_reorder(bigram, n))) +
+  geom_col()
+```
+
+![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+``` r
+mts %>%
+  unnest_ngrams(trigram, transcription, n=3) %>%
+  count(trigram, sort = TRUE) %>%
+  top_n(20, n) %>%
+  ggplot(aes(n, fct_reorder(trigram, n))) +
+  geom_col()
+```
+
+![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- --> Trigrams are
+more indicative of specif procedures and outcomes
+
+### 5 Using the results you got from questions 4. Pick a word and count the words that appears after and before it.
+
+``` r
+ptbigram <- 
+  mts %>%
+  unnest_ngrams(bigram, transcription, n=2) %>%
+  separate(bigram, into = c("word1", "word2"), sep = " ") %>%
+  select(word1, word2) %>%
+  filter (word1 == "patient" | word2 == "patient")
+```
+
+``` r
+ptbigram %>%
+  filter(word1 == "patient") %>% 
+  count(word2, sort = TRUE) %>% 
+  anti_join(stop_words, by = c("word2" = "word")) %>% 
+  top_n (10) %>% 
+    knitr::kable()
+```
+
+    ## Selecting by n
+
+| word2      |   n |
+|:-----------|----:|
+| tolerated  | 994 |
+| denies     | 552 |
+| underwent  | 180 |
+| received   | 160 |
+| reports    | 155 |
+| understood | 113 |
+| lives      |  81 |
+| admits     |  69 |
+| appears    |  68 |
+| including  |  67 |
+
+### Question 6
+
+Which words are most used in each of the specialties. you can use
+group_by() and top_n() from dplyr to have the calculations be done
+within each specialty. Remember to remove stopwords. How about the most
+5 used words?
+
+``` r
+mts %>%
+  unnest_tokens(word, transcription) %>%
+  group_by(medical_specialty) %>%
+  count(word, sort = TRUE) %>%
+  filter( !(word %in% stop_words$word) & !grepl(pattern = "^[0-9]+$", x = word)) %>%
+  top_n(5, n) %>%
+ arrange(medical_specialty, desc(n))
+```
+
+    ## # A tibble: 210 × 3
+    ## # Groups:   medical_specialty [40]
+    ##    medical_specialty       word          n
+    ##    <chr>                   <chr>     <int>
+    ##  1 " Allergy / Immunology" history      38
+    ##  2 " Allergy / Immunology" noted        23
+    ##  3 " Allergy / Immunology" patient      22
+    ##  4 " Allergy / Immunology" allergies    21
+    ##  5 " Allergy / Immunology" nasal        13
+    ##  6 " Allergy / Immunology" past         13
+    ##  7 " Autopsy"              left         83
+    ##  8 " Autopsy"              inch         59
+    ##  9 " Autopsy"              neck         55
+    ## 10 " Autopsy"              anterior     47
+    ## # … with 200 more rows
