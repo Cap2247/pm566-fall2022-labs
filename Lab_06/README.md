@@ -109,6 +109,7 @@ mts %>%
   unnest_tokens(word, transcription) %>%
   anti_join(stop_words, by = c("word")) %>%
   count(word, sort = TRUE) %>%
+  filter(!grepl(pattern = "^[0-9]+$", x = word)) %>%
   top_n(20, n) %>%
   ggplot(aes(n, fct_reorder(word, n))) +
   geom_col()
@@ -116,8 +117,8 @@ mts %>%
 
 ![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- --> There are
 many stop words, not specific to medical procedure. Patient is the most
-frequently used word
+frequently used word, and we removed the numbers
 
-### Question 3
+### Question 4
 
 Bonus points if you remove numbers as well
