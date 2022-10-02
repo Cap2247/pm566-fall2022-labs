@@ -1,0 +1,53 @@
+---
+title: "Assignment_02"
+author: "Camille Parchment"
+date: "`r Sys.Date()`"
+output: github_document
+always_allow_html: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+if (!file.exists("individual.csv"))
+download.file("https://raw.githubusercontent.com/USCbiostats/data-science-data/master/01_chs/chs_individual.csv", "individual.csv", method="libcurl", timeout = 60)
+```
+```{r}
+indv <- read.csv("individual.csv")
+```
+
+```{r}
+if (!file.exists("regional.csv"))
+download.file("https://raw.githubusercontent.com/USCbiostats/data-science-data/master/01_chs/chs_regional.csv", "regional.csv", method="libcurl", timeout = 60)
+```
+```{r}
+reg <- read.csv("regional.csv")
+```
+
+### Merge data 
+
+```{r}
+chs <- merge(indv, reg, by="townname")
+```
+```{r}
+nrow(chs)
+```
+
+After merging based on  location (townname) there are still 1200 observations in our data set.
+
+```{r}
+library(tidytext)
+library(tidyverse)
+library(data.table)
+library(dplyr)
+library(ggplot2)
+```
+```{r}
+chs <- as_tibble(chs)
+```
+```{r}
+library(dtplyr)
+```
+
