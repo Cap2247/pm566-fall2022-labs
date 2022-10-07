@@ -50,6 +50,13 @@ chs <- as_tibble(chs)
 ```{r}
 library(dtplyr)
 ```
+### Impute data using the average within the variables “male” and “hispanic.”
+
+```{r}
+chs[, bmi_imp :=fcoalesce(bmi, mean(bmi, na.rm = TRUE)),
+by = .(male,hispanic)]
+
+```
 
 ### Create a BMI catergorical variable and a summary table with underweight, normal weight, overweight, and obese. 
 
@@ -68,18 +75,19 @@ summary(obesity_level)
 ```{r}
 summary(chs$bmi, na.rm = TRUE)
 ```
+
+
+
 ```{r}
-smoke_gas_exposure <- mutate(chs,)
+smoke_gas_exposure <- ifelse(chs$smoke == 0 & chs$gasstove == 0 , "none",
+                                            ifelse(chs$smoke == 1 & chs$gasstove == 0, "smoke_only",
+                                            ifelse(chs$smoke == 0 & chs$gasstove == 1, "gas_only",
+                                            ifelse(chs$smoke == 1 & chs$gasstove == 1, "both", NA))))
+                                            table(smoke_gas_exposure, useNA = "always")
 ```
+ 
 
-
-```{r}
-smoke_gas_exposure <-  ifelse(chs$smoke == 0 | chs$gasstove == 0 , "none", 
+ ifelse(chs$smoke == 0 | chs$gasstove == 0 , "none", 
                               ifelse(chs$smoke == 1, "smoke_only",
                               ifelse(chs$gasstove == 1, "gas_only", smoke_gas_exposure)))
 ```
- 
-```{r}
-table(smoke_gas_exposure)
-```
-
