@@ -54,18 +54,32 @@ library(dtplyr)
 ### Create a BMI catergorical variable and a summary table with underweight, normal weight, overweight, and obese. 
 
 ```{r}
-cat_bmi <- cut(chs$bmi, breaks=c(0, 14, 22, 24, 100), labels= c("underweight","normal", "overwight","obese"), right = FALSE)
+obesity_level <- cut(chs$bmi, breaks=c(0, 14, 22, 24, 100), labels= c("underweight","normal", "overwight","obese"), right = FALSE)
 ```
 ```{r}
-cat_bmi[1:10]
+obesity_level[1:10]
 ```
 ```{r}
 chs$bmi[1:10]
 ```
 ```{r}
-summary(cat_bmi) 
+summary(obesity_level) 
 ```
 ```{r}
 summary(chs$bmi, na.rm = TRUE)
+```
+```{r}
+smoke_gas_exposure <- mutate(chs,)
+```
+
+
+```{r}
+smoke_gas_exposure <-  ifelse(chs$smoke == 0 | chs$gasstove == 0 , "none", 
+                              ifelse(chs$smoke == 1, "smoke_only",
+                              ifelse(chs$gasstove == 1, "gas_only", smoke_gas_exposure)))
+```
+ 
+```{r}
+table(smoke_gas_exposure)
 ```
 
