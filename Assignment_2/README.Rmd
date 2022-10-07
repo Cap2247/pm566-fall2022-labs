@@ -51,3 +51,21 @@ chs <- as_tibble(chs)
 library(dtplyr)
 ```
 
+### Create a BMI catergorical variable and a summary table with underweight, normal weight, overweight, and obese. 
+
+```{r}
+cat_bmi <- cut(chs$bmi, breaks=c(0, 14, 22, 24, 100), labels= c("underweight","normal", "overwight","obese"), right = FALSE)
+```
+```{r}
+cat_bmi[1:10]
+```
+```{r}
+chs$bmi[1:10]
+```
+```{r}
+summary(cat_bmi) 
+```
+```{r}
+summary(chs$bmi, na.rm = TRUE)
+```
+
