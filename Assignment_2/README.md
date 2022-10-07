@@ -275,3 +275,30 @@ ggplot(chs, aes(x= pm25_mass, y= fev )) +geom_boxplot()
     ## Warning: Removed 95 rows containing non-finite values (stat_boxplot).
 
 ![](README_files/figure-gfm/unnamed-chunk-32-1.png)<!-- -->
+
+``` r
+ggplot(chs, aes(x = townname, y = fev)) + 
+    stat_summary(fun.data = factor (pm25_avg), 
+                 geom = "errorbar")
+```
+
+    ## Warning in xtfrm.data.frame(x): cannot xtfrm data frames
+
+    ## Warning: Removed 95 rows containing non-finite values (stat_summary).
+
+    ## Warning: Computation failed in `stat_summary()`:
+    ## Can't convert `fun.data`, a <factor> object, to a function.
+
+![](README_files/figure-gfm/unnamed-chunk-33-1.png)<!-- -->
+
+``` r
+Pm25mass_map <- leaflet(chs) %>%
+      addProviderTiles('CartoDB.Positron') %>% 
+      addCircles(
+    lat = ~lat, lng=~lon,
+                                                  
+    label = ~paste0(townname), color = ~ pm2.pal(pm25_mass),
+    opacity = 1, fillOpacity = 1, radius = 500
+    ) %>% addLegend('bottomleft', pal= pm2.pal, values=chs$pm25_mass,
+          title='Concentrations.', opacity=1)
+```
