@@ -250,3 +250,28 @@ ggplot(chs, aes(x=smoke_gas_exposure, y= fev )) + geom_boxplot()
     ## Warning: Removed 95 rows containing non-finite values (stat_boxplot).
 
 ![](README_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
+
+``` r
+library(leaflet)
+```
+
+``` r
+pm2.pal <- colorNumeric(c('darkgreen','goldenrod','brown'), domain=chs$pm25_mass)
+```
+
+``` r
+pm25_avg <- chs[, .(
+    pm25_mass    = mean(pm25_mass, na.rm=TRUE)),
+    by = townname
+    ][order(townname)] 
+```
+
+``` r
+ggplot(chs, aes(x= pm25_mass, y= fev )) +geom_boxplot()
+```
+
+    ## Warning: Continuous x aesthetic -- did you forget aes(group=...)?
+
+    ## Warning: Removed 95 rows containing non-finite values (stat_boxplot).
+
+![](README_files/figure-gfm/unnamed-chunk-32-1.png)<!-- -->
