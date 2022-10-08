@@ -125,20 +125,30 @@ head(sex_averages)
 head(Obs_averages)
 ```
 ### Part 2
-### facet plot of BMI and FEV by townname 
+### 1. facet plot of BMI and FEV by townname 
 ```{r}
-ggplot(chs, aes(x= bmi, y= fev, color= townname)) + geom_point() + facet_wrap(~ townname, ncol = 4)
+ggplot(chs, aes(x= bmi, y= fev, color= townname)) + geom_point() + facet_wrap(~ townname, ncol = 4) + labs(title = "Bmi by Forced Expiratory Volume Grouped by Town Name", x= "BMI", y="forced expiratory volume")
 ```
+### 2. Stacked Histogram of FEV by BMI category and FEV by smoke/gas exposure. Use different color schemes than the ggplot default.
+
 ```{r}
-ggplot(chs, aes(x= obesity_level, fill= smoke_gas_exposure )) +geom_bar()
+ggplot(chs, aes(x=fev, fill= obesity_level)) + geom_histogram() + scale_fill_brewer()
+ggplot(chs, aes(x=fev, fill= smoke_gas_exposure)) + geom_histogram() + scale_fill_brewer()
 ```
+
+### 3. Barchart of BMI by smoke/gas exposure.
+
+```{r}
+ggplot(chs, aes(x= obesity_level, fill= smoke_gas_exposure )) +geom_bar() + labs(title= "Obesity level by Smoke, Gas or Both", x="Obesity category", y="Count")
+```
+### 4. Statistical summary graphs of FEV by BMI and FEV by smoke/gas exposure category
  
 ```{r}
-ggplot(chs, aes(x= obesity_level, y= fev))+ geom_boxplot()
+ggplot(chs, aes(x= obesity_level, y= fev, fill= obesity_level))+ geom_boxplot() + labs(title= "Forced Expiratory Volume by BMI", x= "obesity catergory", y= "forced expiratory level")
+ggplot(chs, aes(x=smoke_gas_exposure, y= fev, fill= smoke_gas_exposure)) + geom_boxplot() + labs(title = "Forced Expiratory Volume by Smoke/Gas Exposure", x= "smoke gas exposure", y= "forces expiratory volume")
 ```
-```{r}
-ggplot(chs, aes(x=smoke_gas_exposure, y= fev )) + geom_boxplot()
-```
+
+### A leaflet map showing the concentrations of PM2.5 mass in each of the CHS communities.
  
 ```{r}
 library(leaflet)
@@ -149,24 +159,6 @@ pm2.pal <- colorNumeric(c('darkgreen','goldenrod','brown'), domain=chs$pm25_mass
 
 ```
 
-
-```{r}
-pm25_avg <- chs[, .(
-    pm25_mass    = mean(pm25_mass, na.rm=TRUE)),
-    by = townname
-    ][order(townname)] 
-```
-
-```{r}
-ggplot(chs, aes(x= pm25_mass, y= fev )) +geom_boxplot()
-
-```
-
-```{r}
-ggplot(chs, aes(x = townname, y = fev)) + 
-    stat_summary(fun.data = factor (pm25_avg), 
-                 geom = "errorbar")
-```
 ```{r}
 Pm25mass_map <- leaflet(chs) %>%
       addProviderTiles('CartoDB.Positron') %>% 
@@ -179,6 +171,26 @@ Pm25mass_map <- leaflet(chs) %>%
           title='Concentrations.', opacity=1)
 ```
 
+
+```{r}
+pm25_avg <- chs[, .(
+    pm25_mass    = mean(pm25_mass, na.rm=TRUE)),
+    by = townname
+    ][order(townname)] 
+```
+
+### 6. Scatter plot of Pm25 mass by Forced expiratory volume by town name 
+
+```{r}
+ggplot(chs, aes(x= pm25_mass, y= fev, color= townname)) + geom_point() + labs(title= "Pm 2.5 mass vs Forced expiratory volume", x= "Pm 2.5 mass", y= "Forced Expiratory Volume")
+
+```
+
+
+
+```{r}
+RColorBrewer::display.brewer.all()
+```
 
 
 

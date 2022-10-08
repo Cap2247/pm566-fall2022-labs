@@ -219,37 +219,65 @@ head(Obs_averages)
 
 ### Part 2
 
-### facet plot of BMI and FEV by townname
+### 1. facet plot of BMI and FEV by townname
 
 ``` r
-ggplot(chs, aes(x= bmi, y= fev, color= townname)) + geom_point() + facet_wrap(~ townname, ncol = 4)
+ggplot(chs, aes(x= bmi, y= fev, color= townname)) + geom_point() + facet_wrap(~ townname, ncol = 4) + labs(title = "Bmi by Forced Expiratory Volume Grouped by Town Name", x= "BMI", y="forced expiratory volume")
 ```
 
     ## Warning: Removed 95 rows containing missing values (geom_point).
 
-![](README_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-25-1.png)<!-- --> \### 2.
+Stacked Histogram of FEV by BMI category and FEV by smoke/gas exposure.
+Use different color schemes than the ggplot default.
 
 ``` r
-ggplot(chs, aes(x= obesity_level, fill= smoke_gas_exposure )) +geom_bar()
+ggplot(chs, aes(x=fev, fill= obesity_level)) + geom_histogram() + scale_fill_brewer()
 ```
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+    ## Warning: Removed 95 rows containing non-finite values (stat_bin).
 
 ![](README_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
 
 ``` r
-ggplot(chs, aes(x= obesity_level, y= fev))+ geom_boxplot()
+ggplot(chs, aes(x=fev, fill= smoke_gas_exposure)) + geom_histogram() + scale_fill_brewer()
 ```
 
-    ## Warning: Removed 95 rows containing non-finite values (stat_boxplot).
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-![](README_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
+    ## Warning: Removed 95 rows containing non-finite values (stat_bin).
+
+![](README_files/figure-gfm/unnamed-chunk-26-2.png)<!-- -->
+
+### 3. Barchart of BMI by smoke/gas exposure.
 
 ``` r
-ggplot(chs, aes(x=smoke_gas_exposure, y= fev )) + geom_boxplot()
+ggplot(chs, aes(x= obesity_level, fill= smoke_gas_exposure )) +geom_bar() + labs(title= "Obesity level by Smoke, Gas or Both", x="Obesity category", y="Count")
+```
+
+![](README_files/figure-gfm/unnamed-chunk-27-1.png)<!-- --> \### 4.
+Statistical summary graphs of FEV by BMI and FEV by smoke/gas exposure
+category
+
+``` r
+ggplot(chs, aes(x= obesity_level, y= fev, fill= obesity_level))+ geom_boxplot() + labs(title= "Forced Expiratory Volume by BMI", x= "obesity catergory", y= "forced expiratory level")
 ```
 
     ## Warning: Removed 95 rows containing non-finite values (stat_boxplot).
 
 ![](README_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
+
+``` r
+ggplot(chs, aes(x=smoke_gas_exposure, y= fev, fill= smoke_gas_exposure)) + geom_boxplot() + labs(title = "Forced Expiratory Volume by Smoke/Gas Exposure", x= "smoke gas exposure", y= "forces expiratory volume")
+```
+
+    ## Warning: Removed 95 rows containing non-finite values (stat_boxplot).
+
+![](README_files/figure-gfm/unnamed-chunk-28-2.png)<!-- -->
+
+### A leaflet map showing the concentrations of PM2.5 mass in each of the CHS communities.
 
 ``` r
 library(leaflet)
@@ -258,38 +286,6 @@ library(leaflet)
 ``` r
 pm2.pal <- colorNumeric(c('darkgreen','goldenrod','brown'), domain=chs$pm25_mass)
 ```
-
-``` r
-pm25_avg <- chs[, .(
-    pm25_mass    = mean(pm25_mass, na.rm=TRUE)),
-    by = townname
-    ][order(townname)] 
-```
-
-``` r
-ggplot(chs, aes(x= pm25_mass, y= fev )) +geom_boxplot()
-```
-
-    ## Warning: Continuous x aesthetic -- did you forget aes(group=...)?
-
-    ## Warning: Removed 95 rows containing non-finite values (stat_boxplot).
-
-![](README_files/figure-gfm/unnamed-chunk-32-1.png)<!-- -->
-
-``` r
-ggplot(chs, aes(x = townname, y = fev)) + 
-    stat_summary(fun.data = factor (pm25_avg), 
-                 geom = "errorbar")
-```
-
-    ## Warning in xtfrm.data.frame(x): cannot xtfrm data frames
-
-    ## Warning: Removed 95 rows containing non-finite values (stat_summary).
-
-    ## Warning: Computation failed in `stat_summary()`:
-    ## Can't convert `fun.data`, a <factor> object, to a function.
-
-![](README_files/figure-gfm/unnamed-chunk-33-1.png)<!-- -->
 
 ``` r
 Pm25mass_map <- leaflet(chs) %>%
@@ -302,3 +298,26 @@ Pm25mass_map <- leaflet(chs) %>%
     ) %>% addLegend('bottomleft', pal= pm2.pal, values=chs$pm25_mass,
           title='Concentrations.', opacity=1)
 ```
+
+``` r
+pm25_avg <- chs[, .(
+    pm25_mass    = mean(pm25_mass, na.rm=TRUE)),
+    by = townname
+    ][order(townname)] 
+```
+
+### 6. Scatter plot of Pm25 mass by Forced expiratory volume by town name
+
+``` r
+ggplot(chs, aes(x= pm25_mass, y= fev, color= townname)) + geom_point() + labs(title= "Pm 2.5 mass vs Forced expiratory volume", x= "Pm 2.5 mass", y= "Forced Expiratory Volume")
+```
+
+    ## Warning: Removed 95 rows containing missing values (geom_point).
+
+![](README_files/figure-gfm/unnamed-chunk-33-1.png)<!-- -->
+
+``` r
+RColorBrewer::display.brewer.all()
+```
+
+![](README_files/figure-gfm/unnamed-chunk-34-1.png)<!-- -->
