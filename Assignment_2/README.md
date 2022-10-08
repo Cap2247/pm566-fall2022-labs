@@ -227,12 +227,14 @@ ggplot(chs, aes(x= bmi, y= fev, color= townname)) + geom_point() + facet_wrap(~ 
 
     ## Warning: Removed 95 rows containing missing values (geom_point).
 
-![](README_files/figure-gfm/unnamed-chunk-25-1.png)<!-- --> \### 2.
-Stacked Histogram of FEV by BMI category and FEV by smoke/gas exposure.
-Use different color schemes than the ggplot default.
+![](README_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->
+
+Forced air exposure is clustered around a lower BMI.
+
+### 2. Stacked Histogram of FEV by BMI category and FEV by smoke/gas exposure. Use different color schemes than the ggplot default.
 
 ``` r
-ggplot(chs, aes(x=fev, fill= obesity_level)) + geom_histogram() + scale_fill_brewer()
+ggplot(chs, aes(x=fev, fill= obesity_level)) + geom_histogram() + scale_fill_brewer() + labs( title= "FEV and BMI", x= "Forced expiratory volume")
 ```
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
@@ -242,7 +244,7 @@ ggplot(chs, aes(x=fev, fill= obesity_level)) + geom_histogram() + scale_fill_bre
 ![](README_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
 
 ``` r
-ggplot(chs, aes(x=fev, fill= smoke_gas_exposure)) + geom_histogram() + scale_fill_brewer()
+ggplot(chs, aes(x=fev, fill= smoke_gas_exposure)) + geom_histogram() + scale_fill_brewer() + labs( title= "FEV and Smoke/ Gas exposure", x="forced gas exposure" )
 ```
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
@@ -251,15 +253,21 @@ ggplot(chs, aes(x=fev, fill= smoke_gas_exposure)) + geom_histogram() + scale_fil
 
 ![](README_files/figure-gfm/unnamed-chunk-26-2.png)<!-- -->
 
+Forced gas exposer is higher for individuals exposed to both gas and
+smoke, and are underwight.
+
 ### 3. Barchart of BMI by smoke/gas exposure.
 
 ``` r
 ggplot(chs, aes(x= obesity_level, fill= smoke_gas_exposure )) +geom_bar() + labs(title= "Obesity level by Smoke, Gas or Both", x="Obesity category", y="Count")
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-27-1.png)<!-- --> \### 4.
-Statistical summary graphs of FEV by BMI and FEV by smoke/gas exposure
-category
+![](README_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
+
+individuals with normal weight have higher smoke andgs exposure as well
+as gas only.
+
+### 4. Statistical summary graphs of FEV by BMI and FEV by smoke/gas exposure category
 
 ``` r
 ggplot(chs, aes(x= obesity_level, y= fev, fill= obesity_level))+ geom_boxplot() + labs(title= "Forced Expiratory Volume by BMI", x= "obesity catergory", y= "forced expiratory level")
@@ -277,26 +285,13 @@ ggplot(chs, aes(x=smoke_gas_exposure, y= fev, fill= smoke_gas_exposure)) + geom_
 
 ![](README_files/figure-gfm/unnamed-chunk-28-2.png)<!-- -->
 
-### A leaflet map showing the concentrations of PM2.5 mass in each of the CHS communities.
+FEV is more variedd among normal weight individuals while obese
+individuals have higher average FEV. Very little difference between FEV
+and smoke/gas exposure. Gas only has a wider spread and mor outliers
+than the others.
 
 ``` r
 library(leaflet)
-```
-
-``` r
-pm2.pal <- colorNumeric(c('darkgreen','goldenrod','brown'), domain=chs$pm25_mass)
-```
-
-``` r
-Pm25mass_map <- leaflet(chs) %>%
-      addProviderTiles('CartoDB.Positron') %>% 
-      addCircles(
-    lat = ~lat, lng=~lon,
-                                                  
-    label = ~paste0(townname), color = ~ pm2.pal(pm25_mass),
-    opacity = 1, fillOpacity = 1, radius = 500
-    ) %>% addLegend('bottomleft', pal= pm2.pal, values=chs$pm25_mass,
-          title='Concentrations.', opacity=1)
 ```
 
 ``` r
@@ -314,10 +309,43 @@ ggplot(chs, aes(x= pm25_mass, y= fev, color= townname)) + geom_point() + labs(ti
 
     ## Warning: Removed 95 rows containing missing values (geom_point).
 
-![](README_files/figure-gfm/unnamed-chunk-33-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-31-1.png)<!-- -->
+
+Pm 2.5 is concentrated between 5-10 and 19-25. Only Mira Loma has values
+above 25.
 
 ``` r
 RColorBrewer::display.brewer.all()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-34-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-32-1.png)<!-- -->
+
+``` r
+pm25 <- cut(chs$pm25_mass, 
+            breaks = c(5, 10, 20, 30), right= FALSE, 
+            labels = c("low [5-10)", "medium [10-20)", "high [20-30)"))
+```
+
+``` r
+pm2.pal <- colorFactor(palette= c('purple','goldenrod','red'), domain=chs$pm25)
+```
+
+### PM concentrations by locations
+
+``` r
+leaflet(data= chs) %>%
+      addProviderTiles('CartoDB.Positron') %>% 
+      addCircles(
+              lat =  ~lat, 
+              lng =  ~lon,
+              color = ~ pm2.pal(pm25),                                    
+              label = ~paste0("Pm concentration=", chs$pm25_mass, "type=", chs$pm25), 
+              opacity = 1, fillOpacity = 1, radius = 500
+    )
+```
+
+![](README_files/figure-gfm/unnamed-chunk-35-1.png)<!-- -->
+
+Pasadena and more inland counties have higher concentrations of Pm 2.5
+concentrations over 20. Northern counties have concentrations lower
+concentrations below 10.
