@@ -2,7 +2,11 @@
 title: "Lab 09"
 author: "CP"
 date: "`r Sys.Date()`"
-output: github_document
+output: 
+  github_document:
+    
+    
+
 always_allow_html: true
 ---
 
@@ -37,11 +41,12 @@ f1 <- fun1alt(50000, 4)
 
 
 ```{r}
-# Benchmarking
-#microbenchmark::microbenchmark(
-#  fun1(),
- # fun1alt()
-#
+
+#benchmarking
+microbenchmark::microbenchmark(
+  fun1(),
+  fun1alt()
+)
 ```
 
 
@@ -49,5 +54,40 @@ f1 <- fun1alt(50000, 4)
 ```{r}
 d <- matrix(1:16, ncol = 4)
 d
+```
+
+## Problem 3. 
+
+find the column max function max.col()
+
+```{r}
+diag(d)
+d[c(1,6,11,16)]
+d[cbind(1:4, 1:4)]
+```
+```{r}
+# Data Generating Process (10 x 10,000 matrix)
+set.seed(1234)
+M <- matrix(runif(12), ncol=4)
+M
+
+# Find each column's max value
+fun2 <- function(x) {
+  apply(x, 2, max)
+}
+fun2(M)
+fun2alt <- function(x) {
+  # YOUR CODE HERE
+ idx <- max.col( t(x))
+ x[cbind(idx, 1:4)]
+}
+fun2alt(M)
+
+# Benchmarking
+x <- matrix(rnorm(1e4), nrow=10)
+microbenchmark::microbenchmark(
+  fun2(x),
+  fun2alt(x)
+)
 ```
 
