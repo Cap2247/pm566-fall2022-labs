@@ -42,9 +42,9 @@ microbenchmark::microbenchmark(
 ```
 
     ## Unit: microseconds
-    ##       expr     min      lq      mean  median       uq      max neval
-    ##     fun1() 255.301 325.951 363.37498 352.701 391.2510  572.801   100
-    ##  fun1alt()  11.601  13.551  33.65896  14.451  16.4005 1784.601   100
+    ##       expr     min      lq       mean   median       uq      max neval
+    ##     fun1() 233.001 712.901 1073.74507 1096.251 1446.601 2289.601   100
+    ##  fun1alt()  11.901  13.401   52.73699   15.701   22.601 2395.001   100
 
 ### what is a matrix and what can we do with them
 
@@ -124,6 +124,54 @@ microbenchmark::microbenchmark(
 ```
 
     ## Unit: microseconds
-    ##        expr     min       lq     mean    median        uq      max neval
-    ##     fun2(x) 885.401 987.1015 1196.314 1034.0005 1152.8510 4484.001   100
-    ##  fun2alt(x)  84.701 105.4015  168.044  144.1015  172.5515 2336.002   100
+    ##        expr     min       lq     mean    median       uq      max neval
+    ##     fun2(x) 917.100 955.7010 1277.764 1005.8510 1431.751 4406.701   100
+    ##  fun2alt(x)  82.901 103.7005  172.908  140.3015  165.301 2868.601   100
+
+``` r
+library(parallel)
+```
+
+``` r
+my_boot <- function(dat, stat, R, ncpus = 1L) {
+  
+  # Getting the random indices
+  n <- nrow(dat)
+  idx <- matrix(sample.int(n, n*R, TRUE), nrow=n, ncol=R)
+ 
+  # Making the cluster using `ncpus`
+  # STEP 1: GOES HERE
+  cl <- makePSOCKcluster(4)
+   clusterSetRNGStream(cl, 123)
+  # STEP 2: GOES HERE
+ clusterExport(cl,c("stat", "dat", "idx"))
+  
+    # STEP 3: THIS FUNCTION NEEDS TO BE REPLACES WITH parLapply
+  ans <- parlapply(cl, seq_len(R), function(i) {
+    stat(dat[idx[,i], , drop=FALSE])
+  })
+  
+  # Coercing the list into a matrix
+  ans <- do.call(rbind, ans)
+  
+  # STEP 4: GOES HERE
+  
+  ans
+  
+}
+```
+
+``` r
+my_stat <- function(d) coef(lm(y ~ x, data=d))
+
+# DATA SIM
+set.seed(1)
+n <- 500; R <- 1e4
+
+x <- cbind(rnorm(n)); y <- x*5 + rnorm(n)
+
+# Checking if we get something similar as lm
+ans0 <- confint(lm(y~x))
+#ans1 <- my_boot(dat = data.frame(x, y), my_stat, R = R, ncpus = 2L)
+#stopCluster(cl)
+```
