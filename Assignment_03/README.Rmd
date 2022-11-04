@@ -1,0 +1,41 @@
+---
+title: "Assignment 3"
+author: "CP"
+date: "`r Sys.Date()`"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(rvest)
+library(httr)
+library(tidyverse)
+library(stringr)
+library(xml2)
+```
+
+### API
+```{r}
+website <- xml2::read_html("https://pubmed.ncbi.nlm.nih.gov/?term=sars-cov-2%20trial%20vaccine")
+  
+counts <- xml2::xml_find_first(website, "/html/body/main/div[9]/div[2]/div[2]/div[1]/div[1]")
+counts <- as.character(counts)
+#stringr::str_extract(counts, "[REGEX FOR NUMBERS WITH COMMAS/DOTS]")
+```
+
+## There were 4009 paper for this search  
+```{r}
+query_ids <- GET(
+  url      = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+  query    = list(
+    db     = "pubmed",
+    term   = "sars-cov-2 trial vaccine",
+    retmax = 250
+  )
+)
+ids <- httr::content(query_ids)
+```
+```{r}
+
+```
+
