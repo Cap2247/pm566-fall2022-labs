@@ -55,10 +55,10 @@ head(publications)
 ```
 
     ## $node
-    ## <pointer: 0x000001ea4c2ae470>
+    ## <pointer: 0x000001c6a9572b00>
     ## 
     ## $doc
-    ## <pointer: 0x000001ea48713710>
+    ## <pointer: 0x000001c6a816c5b0>
 
 ``` r
 pub_char_list <- xml2::xml_children(publications)
