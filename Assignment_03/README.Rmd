@@ -206,4 +206,4 @@ pubmed %>%
   bind_tf_idf(token, term, n) %>%
   arrange(desc(tf_idf))
 ```
-Covid and prostate have the highest tf-idf value. This indicates that these words are more relevant in these abstracts. This differs from the findings in question 1 because 19 was a frequently used words as well as patient, however this proves that they were not as significant. 
+Covid and prostate have the highest tf-idf value. This indicates that these words are more relevant in these abstracts. This differs from the findings in question 1 because 19 was a frequently used words as well as patient, however this proves that they were not as significant.   
