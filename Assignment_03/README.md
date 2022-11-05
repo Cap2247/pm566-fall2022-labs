@@ -191,6 +191,8 @@ str(pubmed)
     ##  $ abstract: chr [1:3241] "Background and aims: Many patients with coronavirus disease 2019 (COVID-19) have underlying cardiovascular (CV)"| __truncated__ "Introduction: Contradictory data have been reported on the incidence of stroke in patients with COVID-19 and th"| __truncated__ "This article aims at collecting all information needed for dentists regarding the COVID-19 pandemic throughout "| __truncated__ "OBJECTIVE. The objective of our study was to determine the misdiagnosis rate of radiologists for coronavirus di"| __truncated__ ...
     ##  $ term    : chr [1:3241] "covid" "covid" "covid" "covid" ...
 
+## 1. Tokenize the abstracts and count the number of each token. Do you see anything interesting? Does removing stop words change what tokens appear as the most frequent? What are the 5 most common tokens for each search term after removing stopwords?
+
 ``` r
 pubmed %>%
   unnest_tokens(token, abstract) %>%
@@ -215,3 +217,98 @@ pubmed %>%
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+
+``` r
+pubmed %>%
+  unnest_tokens(token, abstract) %>%
+  anti_join(stop_words, by = c("token" = "word")) %>%
+  count(token, sort = TRUE) %>%
+  top_n(5, n) %>%
+  ggplot(aes(n, fct_reorder(token, n))) +
+  geom_col() + labs(title = " Top 5 tokens in Pubmed Abstracts")
+```
+
+![](README_files/figure-gfm/unnamed-chunk-16-1.png)<!-- --> Removing the
+stop words that are common articles in manuscripts reveals that covid,
+and 19 are the most utilized words.
+
+## 2. Tokenize the abstracts into bigrams. Find the 10 most common bigram and visualize them with ggplot2.
+
+``` r
+pubmed %>%
+  unnest_ngrams(bigram, abstract, n=2) %>%
+  
+  count(bigram, sort = TRUE) %>%
+  top_n(10, n) %>%
+  ggplot(aes(n, fct_reorder(bigram, n))) +
+  geom_col()
+```
+
+![](README_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+
+When we create a bigram we see covid 19 is infact the most frequently
+used word.
+
+``` r
+pubmed %>%
+  unnest_ngrams(bigram, abstract, n=2) %>%
+  count(bigram, sort = TRUE) %>%
+  top_n(20, n) %>%
+  ggplot(aes(n, fct_reorder(bigram, n))) +
+  geom_col()
+```
+
+![](README_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+
+## 3. Calculate the TF-IDF value for each word-search term combination. (here you want the search term to be the “document”) What are the 5 tokens from each search term with the highest TF-IDF value? How are the results different from the answers you got in question 1?
+
+``` r
+pubmed %>%
+  unnest_tokens(token, abstract) %>%
+  count(term, token) %>%
+  bind_tf_idf(term, token, n) %>%
+  arrange(desc(tf_idf))
+```
+
+    ## # A tibble: 39,240 × 6
+    ##    term            token      n    tf   idf tf_idf
+    ##    <chr>           <chr>  <int> <dbl> <dbl>  <dbl>
+    ##  1 cystic fibrosis 0.041      1     1  1.35   1.35
+    ##  2 cystic fibrosis 0.0515     1     1  1.35   1.35
+    ##  3 cystic fibrosis 1,197      1     1  1.35   1.35
+    ##  4 cystic fibrosis 1,800      1     1  1.35   1.35
+    ##  5 cystic fibrosis 102.4      1     1  1.35   1.35
+    ##  6 cystic fibrosis 10kb       1     1  1.35   1.35
+    ##  7 cystic fibrosis 10kbc      3     1  1.35   1.35
+    ##  8 cystic fibrosis 112.1      1     1  1.35   1.35
+    ##  9 cystic fibrosis 15.25      1     1  1.35   1.35
+    ## 10 cystic fibrosis 15.6       1     1  1.35   1.35
+    ## # … with 39,230 more rows
+
+``` r
+pubmed %>%
+  unnest_tokens(token, abstract) %>%
+  count(token, term) %>%
+  bind_tf_idf(token, term, n) %>%
+  arrange(desc(tf_idf))
+```
+
+    ## # A tibble: 39,240 × 6
+    ##    token        term                n      tf   idf  tf_idf
+    ##    <chr>        <chr>           <int>   <dbl> <dbl>   <dbl>
+    ##  1 covid        covid            7275 0.0371  1.61  0.0597 
+    ##  2 prostate     prostate cancer  3832 0.0312  1.61  0.0502 
+    ##  3 eclampsia    preeclampsia     2005 0.0143  1.61  0.0230 
+    ##  4 preeclampsia preeclampsia     1863 0.0133  1.61  0.0214 
+    ##  5 meningitis   meningitis        429 0.00919 1.61  0.0148 
+    ##  6 cf           cystic fibrosis   625 0.0127  0.916 0.0117 
+    ##  7 fibrosis     cystic fibrosis   867 0.0176  0.511 0.00901
+    ##  8 cystic       cystic fibrosis   862 0.0175  0.511 0.00896
+    ##  9 meningeal    meningitis        219 0.00469 1.61  0.00755
+    ## 10 pandemic     covid             800 0.00408 1.61  0.00657
+    ## # … with 39,230 more rows
+
+Covid and prostate have the highest tf-idf value. This indicates that
+these words are more relevant in these abstracts. This differs from the
+findings in question 1 because 19 was a frequently used words as well as
+patient, however this proves that they were not as significant.
