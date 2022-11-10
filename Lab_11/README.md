@@ -9,6 +9,8 @@ editor_options:
 always_allow_html: true
 ---
 
+**HTML Report:**[**click here**](https://rawcdn.githack.com/Cap2247/pm566-fall2022-labs/52a02c27b9de7b6e595095abc7d8d216757d0750/Lab_11/Lab_11.html)
+
 Grab lab file using command line: 
 
 ```sh
