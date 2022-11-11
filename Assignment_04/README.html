@@ -11,7 +11,7 @@
 
 <meta name="author" content="CP" />
 
-<meta name="date" content="2022-11-07" />
+<meta name="date" content="2022-11-11" />
 
 <title>Assignment_4</title>
 
@@ -365,7 +365,7 @@ pre code {
 
 <h1 class="title toc-ignore">Assignment_4</h1>
 <h4 class="author">CP</h4>
-<h4 class="date">2022-11-07</h4>
+<h4 class="date">2022-11-11</h4>
 
 </div>
 
@@ -430,6 +430,14 @@ GROUP BY rating
 <h2>Question 3</h2>
 <p>Use table film_category together with film to find the how many films
 there are with each category ID</p>
+<pre class="r"><code>dbGetQuery(con,&quot;
+SELECT  film.film_id, film_category.category_id,
+COUNT(*) AS count
+FROM film_category
+INNER JOIN film  ON film.film_id = film_category.film_id
+&quot;)</code></pre>
+<pre><code>##   film_id category_id count
+## 1       1           6  1000</code></pre>
 </div>
 
 

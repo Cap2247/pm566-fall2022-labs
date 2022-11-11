@@ -65,6 +65,11 @@ GROUP BY rating
 Use table film_category together with film to find the how many films there are with each category ID
 
 ```{r}
-
+dbGetQuery(con,"
+SELECT  film.film_id, film_category.category_id,
+COUNT(*) AS count
+FROM film_category
+INNER JOIN film  ON film.film_id = film_category.film_id
+")
 ```
 
