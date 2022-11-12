@@ -2,7 +2,7 @@
 title: "Assignment_4"
 author: "CP"
 date: "`r Sys.Date()`"
-output: html_document
+output: github_document
 always_allow_html: TRUE
 ---
 
@@ -91,3 +91,60 @@ GROUP BY name
 ")
 ```
 Category 15 which is Sports is the most popular category with 74 movies. 
+
+HPC
+
+```{r}
+# Total row sums
+fun1 <- function(mat) {
+  n <- nrow(mat)
+  ans <- double(n) 
+  for (i in 1:n) {
+    ans[i] <- sum(mat[i, ])
+  }
+  ans
+}
+fun1alt <- function(mat) {
+  # YOUR CODE HERE
+}
+# Cumulative sum by row
+fun2 <- function(mat) {
+  n <- nrow(mat)
+  k <- ncol(mat)
+  ans <- mat
+  for (i in 1:n) {
+    for (j in 2:k) {
+      ans[i,j] <- mat[i, j] + ans[i, j - 1]
+    }
+  }
+  ans
+}
+
+fun2alt <- function(mat) {
+  # YOUR CODE HERE
+}
+
+
+# Use the data with this code
+set.seed(2315)
+dat <- matrix(rnorm(200 * 100), nrow = 200)
+```
+```{r}
+# Test for the first
+microbenchmark::microbenchmark(
+  fun1(dat),
+  fun1alt(dat))
+```
+
+```{r}
+remove(fun1alt)
+remove(fun2alt)
+```
+
+# Test for the second
+microbenchmark::microbenchmark(
+  fun2(dat),
+  fun2alt(dat), unit = "relative", check = "equivalent"
+)
+```
+
