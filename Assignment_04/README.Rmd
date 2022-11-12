@@ -67,9 +67,27 @@ Use table film_category together with film to find the how many films there are 
 ```{r}
 dbGetQuery(con,"
 SELECT  film.film_id, film_category.category_id,
-COUNT(*) AS count
-FROM film_category
-INNER JOIN film  ON film.film_id = film_category.film_id
+COUNT(*) AS N
+FROM film
+INNER JOIN film_category  ON film.film_id = film_category.film_id
+GROUP BY category_id
 ")
+
+
 ```
 
+
+## Question 4 
+Incorporate table category into the answer to the previous question to find the name of the most popular category.
+
+```{r}
+dbGetQuery(con,"
+SELECT  film.film_id, film_category.category_id,category.category_id, category.name,
+COUNT(*) AS N
+FROM film
+INNER JOIN film_category  ON film.film_id = film_category.film_id
+INNER JOIN category ON category.category_id = film_category.category_id
+GROUP BY name 
+")
+```
+Category 15 which is Sports is the most popular category with 74 movies. 

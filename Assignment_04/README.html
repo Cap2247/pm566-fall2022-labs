@@ -11,7 +11,7 @@
 
 <meta name="author" content="CP" />
 
-<meta name="date" content="2022-11-11" />
+<meta name="date" content="2022-11-12" />
 
 <title>Assignment_4</title>
 
@@ -365,7 +365,7 @@ pre code {
 
 <h1 class="title toc-ignore">Assignment_4</h1>
 <h4 class="author">CP</h4>
-<h4 class="date">2022-11-11</h4>
+<h4 class="date">2022-11-12</h4>
 
 </div>
 
@@ -432,12 +432,60 @@ GROUP BY rating
 there are with each category ID</p>
 <pre class="r"><code>dbGetQuery(con,&quot;
 SELECT  film.film_id, film_category.category_id,
-COUNT(*) AS count
-FROM film_category
-INNER JOIN film  ON film.film_id = film_category.film_id
+COUNT(*) AS N
+FROM film
+INNER JOIN film_category  ON film.film_id = film_category.film_id
+GROUP BY category_id
 &quot;)</code></pre>
-<pre><code>##   film_id category_id count
-## 1       1           6  1000</code></pre>
+<pre><code>##    film_id category_id  N
+## 1       19           1 64
+## 2       18           2 66
+## 3       48           3 60
+## 4       14           4 57
+## 5        7           5 58
+## 6        1           6 68
+## 7       33           7 62
+## 8        5           8 69
+## 9        6           9 73
+## 10      46          10 61
+## 11       2          11 56
+## 12      12          12 51
+## 13      22          13 63
+## 14      26          14 61
+## 15      10          15 74
+## 16      41          16 57</code></pre>
+</div>
+<div id="question-4" class="section level2">
+<h2>Question 4</h2>
+<p>Incorporate table category into the answer to the previous question
+to find the name of the most popular category.</p>
+<pre class="r"><code>dbGetQuery(con,&quot;
+SELECT  film.film_id, film_category.category_id,category.category_id, category.name,
+COUNT(*) AS N
+FROM film
+INNER JOIN film_category  ON film.film_id = film_category.film_id
+INNER JOIN category ON category.category_id = film_category.category_id
+GROUP BY name 
+&quot;)</code></pre>
+<pre><code>##    film_id category_id category_id        name  N
+## 1       19           1           1      Action 64
+## 2       18           2           2   Animation 66
+## 3       48           3           3    Children 60
+## 4       14           4           4    Classics 57
+## 5        7           5           5      Comedy 58
+## 6        1           6           6 Documentary 68
+## 7       33           7           7       Drama 62
+## 8        5           8           8      Family 69
+## 9        6           9           9     Foreign 73
+## 10      46          10          10       Games 61
+## 11       2          11          11      Horror 56
+## 12      12          12          12       Music 51
+## 13      22          13          13         New 63
+## 14      26          14          14      Sci-Fi 61
+## 15      10          15          15      Sports 74
+## 16      41          16          16      Travel 57</code></pre>
+<p>Category 15 which is Sports is the most popular category with 74
+movies.</p>
 </div>
 
 
