@@ -11,6 +11,8 @@ knitr::opts_chunk$set(echo = TRUE)
 options(repos = c(CRAN = "http://cran.rstudio.com"))
 ```
 
+### SQL
+
 ```{r}
 library(RSQLite)
 library(DBI)
@@ -92,7 +94,7 @@ GROUP BY name
 ```
 Category 15 which is Sports is the most popular category with 74 movies. 
 
-HPC
+### HPC
 
 ```{r}
 # Total row sums
