@@ -1,7 +1,7 @@
 Assignment_4
 ================
 CP
-2022-11-13
+2022-11-16
 
 ### SQL
 
@@ -167,27 +167,15 @@ fun1 <- function(mat) {
   }
   ans
 }
+```
+
+``` r
 fun1alt <- function(mat) {
-  # YOUR CODE HERE
+  rowSums(mat)
 }
-# Cumulative sum by row
-fun2 <- function(mat) {
-  n <- nrow(mat)
-  k <- ncol(mat)
-  ans <- mat
-  for (i in 1:n) {
-    for (j in 2:k) {
-      ans[i,j] <- mat[i, j] + ans[i, j - 1]
-    }
-  }
-  ans
-}
+```
 
-fun2alt <- function(mat) {
-  # YOUR CODE HERE
-}
-
-
+``` r
 # Use the data with this code
 set.seed(2315)
 dat <- matrix(rnorm(200 * 100), nrow = 200)
@@ -200,17 +188,86 @@ microbenchmark::microbenchmark(
   fun1alt(dat))
 ```
 
-    ## Unit: nanoseconds
-    ##          expr    min     lq   mean median     uq     max neval
-    ##     fun1(dat) 184700 271300 381558 311900 378500 5155600   100
-    ##  fun1alt(dat)    100    200   6291    300    850  568400   100
+    ## Unit: microseconds
+    ##          expr     min       lq      mean   median      uq      max neval
+    ##     fun1(dat) 202.300 227.0505 482.77196 378.3505 556.701 4245.002   100
+    ##  fun1alt(dat)  47.801  59.5510  72.79196  60.8010  62.351 1060.800   100
 
 ``` r
-remove(fun1alt)
-remove(fun2alt)
+# Cumulative sum by row
+fun2 <- function(mat) {
+  n <- nrow(mat)
+  k <- ncol(mat)
+  ans <- mat
+  for (i in 1:n) {
+    for (j in 2:k) {
+      ans[i,j] <- mat[i, j] + ans[i, j - 1]
+    }
+  }
+  ans
+}
 ```
 
-# Test for the second
+``` r
+fun2alt <- function(mat) {
+  cumsum(mat) }
+```
 
-microbenchmark::microbenchmark( fun2(dat), fun2alt(dat), unit =
-“relative”, check = “equivalent” ) \`\`\`
+``` r
+# Test for the second
+microbenchmark::microbenchmark(
+  fun2(dat),
+  fun2alt(dat))
+```
+
+    ## Unit: microseconds
+    ##          expr      min       lq       mean    median       uq      max neval
+    ##     fun2(dat) 1674.202 1899.601 2154.96812 2016.1505 2212.051 5901.001   100
+    ##  fun2alt(dat)   37.901   61.551   92.99098   69.6505   87.301 1006.901   100
+
+``` r
+sim_pi <- function(n = 1000, i = NULL) {
+  p <- matrix(runif(n*2), ncol = 2)
+  mean(rowSums(p^2) < 1) * 4
+}
+
+# Here is an example of the run
+set.seed(156)
+sim_pi(1000) # 3.132
+```
+
+    ## [1] 3.132
+
+``` r
+# This runs the simulation a 4,000 times, each with 10,000 points
+set.seed(1231)
+system.time({
+  ans <- unlist(lapply(1:4000, sim_pi, n = 10000))
+  print(mean(ans))
+})
+```
+
+    ## [1] 3.14124
+
+    ##    user  system elapsed 
+    ##    1.88    0.70    2.58
+
+``` r
+library(parallel)
+```
+
+``` r
+system.time({
+  cl <- parallel::makePSOCKcluster(2L)
+
+parallel::clusterSetRNGStream(cl, 123)
+  ans <- unlist(parallel::parLapply(cl, 1:4000, sim_pi, n = 10000))
+  print(mean(ans))
+  parallel::stopCluster(cl)
+})
+```
+
+    ## [1] 3.141365
+
+    ##    user  system elapsed 
+    ##    0.02    0.02    2.55
